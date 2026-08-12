@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0f5bd8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Atendimentos">
+  <meta name="description" content="Controle de Atendimentos Appolus">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <title>Controle de Atendimentos</title>
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+  <style>
+    :root {
+      --primary:#0f5bd8;
+      --bg:#f4f7fb;
+      --text:#172033;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+    }
+
+    * { box-sizing:border-box; }
+    html, body {
+      margin:0;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .app {
+      height:100dvh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .topbar {
+      flex:0 0 auto;
+      background:#fff;
+      border-bottom:1px solid var(--border);
+      padding:max(8px, env(safe-area-inset-top)) 12px 8px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-height:58px;
+      z-index:10;
+    }
+
+    .logo {
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#0f5bd8,#4b88ef);
+      color:#fff;
+      font-weight:800;
+      box-shadow:0 6px 16px rgba(15,91,216,.22);
+      flex:0 0 auto;
+    }
+
+    .brand {
+      min-width:0;
+      flex:1;
+    }
+
+    .brand strong {
+      display:block;
+      font-size:14px;
+      line-height:1.15;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .brand small {
+      display:block;
+      color:var(--muted);
+      font-size:10px;
+      margin-top:3px;
+    }
+
+    .actions {
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+
+    button {
+      appearance:none;
+      border:0;
+      border-radius:10px;
+      background:#edf4ff;
+      color:var(--primary);
+      font:inherit;
+      font-weight:700;
+      font-size:12px;
+      padding:9px 10px;
+      cursor:pointer;
+    }
+
+    .frame-wrap {
+      position:relative;
+      flex:1 1 auto;
+      min-height:0;
+      background:#fff;
+    }
+
+    iframe {
+      width:100%;
+      height:100%;
+      border:0;
+      display:block;
+      background:#fff;
+    }
+
+    .loading {
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--bg);
+      z-index:5;
+      transition:opacity .2s ease;
+    }
+
+    .loading.hide {
+      opacity:0;
+      pointer-events:none;
+    }
+
+    .loading-card {
+      width:min(320px, calc(100% - 32px));
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:24px;
+      text-align:center;
+      box-shadow:0 12px 36px rgba(15,35,70,.08);
+    }
+
+    .spinner {
+      width:42px;
+      height:42px;
+      border:4px solid #dbe7fb;
+      border-top-color:var(--primary);
+      border-radius:50%;
+      margin:0 auto 14px;
+      animation:spin .8s linear infinite;
+    }
+
+    @keyframes spin { to { transform:rotate(360deg); } }
+
+    .loading-card strong {
+      display:block;
+      font-size:15px;
+    }
+
+    .loading-card span {
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      margin-top:6px;
+    }
+
+    .offline {
+      position:absolute;
+      left:12px;
+      right:12px;
+      bottom:calc(12px + env(safe-area-inset-bottom));
+      background:#172033;
+      color:#fff;
+      border-radius:14px;
+      padding:12px 14px;
+      font-size:12px;
+      text-align:center;
+      z-index:20;
+      display:none;
+      box-shadow:0 12px 30px rgba(0,0,0,.22);
+    }
+
+    .offline.show { display:block; }
+
+    .install {
+      position:fixed;
+      left:12px;
+      right:12px;
+      bottom:calc(12px + env(safe-area-inset-bottom));
+      max-width:520px;
+      margin:auto;
+      background:#172033;
+      color:#fff;
+      border-radius:16px;
+      padding:12px;
+      z-index:50;
+      display:none;
+      align-items:center;
+      gap:10px;
+      box-shadow:0 16px 40px rgba(0,0,0,.28);
+    }
+
+    .install.show { display:flex; }
+    .install .txt { flex:1; font-size:12px; }
+    .install .txt strong { display:block; font-size:13px; margin-bottom:2px; }
+    .install .yes { background:#fff; color:#172033; }
+    .install .no { background:transparent; color:#cbd5e1; }
+
+    @media (max-width:520px) {
+      .topbar {
+        min-height:54px;
+        padding-left:10px;
+        padding-right:10px;
+      }
+      .logo { width:34px; height:34px; border-radius:10px; }
+      .brand strong { font-size:13px; }
+      .brand small { font-size:9px; }
+      button { padding:8px 9px; font-size:11px; }
+      #openBtn { display:none; }
+    }
+
+    @media (display-mode: standalone) {
+      #installBtnTop { display:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="logo">A</div>
+      <div class="brand">
+        <strong>Controle de Atendimentos</strong>
+        <small>Appolus</small>
+      </div>
+
+      <div class="actions">
+        <button id="installBtnTop" hidden>Instalar</button>
+        <button id="notifyBtn" title="Ativar notificações">🔔 Notificações</button>
+        <button id="refreshBtn" title="Atualizar">↻ Atualizar</button>
+        <button id="openBtn" title="Abrir no navegador">Abrir fora</button>
+      </div>
+    </header>
+
+    <main class="frame-wrap">
+      <div class="loading" id="loading">
+        <div class="loading-card">
+          <div class="spinner"></div>
+          <strong>Abrindo o sistema</strong>
+          <span>Carregando Controle de Atendimentos...</span>
+        </div>
+      </div>
+
+      <iframe
+        id="appFrame"
+        src="https://script.google.com/a/macros/appolus.com.br/s/AKfycbzzTf9IIJ2VRR4g3qiKezsuJvp20AnN8pjXRvvOCrJxGllzTPQohTYXkdAFExbEQ2Q_NA/exec"
+        allow="clipboard-read; clipboard-write; microphone; camera"
+        referrerpolicy="strict-origin-when-cross-origin"
+        title="Controle de Atendimentos">
+      </iframe>
+
+      <div class="offline" id="offline">
+        Sem conexão com a internet. Verifique sua rede e tente novamente.
+      </div>
+    </main>
+  </div>
+
+  <div class="install" id="installBox">
+    <div class="txt">
+      <strong>Instalar aplicativo</strong>
+      Adicione o Controle de Atendimentos à tela inicial.
+    </div>
+    <button class="no" id="dismissInstall">Agora não</button>
+    <button class="yes" id="installBtn">Instalar</button>
+  </div>
+
+  <script>
+    const APP_URL = 'https://script.google.com/a/macros/appolus.com.br/s/AKfycbzzTf9IIJ2VRR4g3qiKezsuJvp20AnN8pjXRvvOCrJxGllzTPQohTYXkdAFExbEQ2Q_NA/exec';
+    const frame = document.getElementById('appFrame');
+    const loading = document.getElementById('loading');
+    const offline = document.getElementById('offline');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const openBtn = document.getElementById('openBtn');
+    const installBox = document.getElementById('installBox');
+    const installBtn = document.getElementById('installBtn');
+    const installBtnTop = document.getElementById('installBtnTop');
+    const dismissInstall = document.getElementById('dismissInstall');
+
+    let deferredPrompt = null;
+
+    function atualizarConexao() {
+      offline.classList.toggle('show', !navigator.onLine);
+    }
+
+    function recarregarSistema() {
+      loading.classList.remove('hide');
+      const separador = APP_URL.includes('?') ? '&' : '?';
+      frame.src = APP_URL + separador + '_pwa=' + Date.now();
+    }
+
+    frame.addEventListener('load', () => {
+      setTimeout(() => loading.classList.add('hide'), 250);
+    });
+
+    refreshBtn.addEventListener('click', recarregarSistema);
+
+    openBtn.addEventListener('click', () => {
+      window.open(APP_URL, '_blank', 'noopener,noreferrer');
+    });
+
+    window.addEventListener('online', () => {
+      atualizarConexao();
+      recarregarSistema();
+    });
+
+    window.addEventListener('offline', atualizarConexao);
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredPrompt = event;
+      installBox.classList.add('show');
+      installBtnTop.hidden = false;
+    });
+
+    async function instalar() {
+      if (!deferredPrompt) {
+        return;
+      }
+
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBox.classList.remove('show');
+      installBtnTop.hidden = true;
+    }
+
+    installBtn.addEventListener('click', instalar);
+    installBtnTop.addEventListener('click', instalar);
+    dismissInstall.addEventListener('click', () => installBox.classList.remove('show'));
+
+    window.addEventListener('appinstalled', () => {
+      installBox.classList.remove('show');
+      installBtnTop.hidden = true;
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', async () => {
+        try {
+          const registration = await navigator.serviceWorker.register('./service-worker.js');
+          registration.update();
+        } catch (erro) {
+          console.error('Falha ao registrar service worker:', erro);
+        }
+      });
+    }
+
+
+    /* ============================================================
+       ONESIGNAL / WEB PUSH
+       ============================================================
+       Substitua APENAS o valor abaixo pelo App ID do OneSignal.
+       O App ID é público; a REST API Key fica somente no Code.gs
+       através das Propriedades do script.
+       ============================================================ */
+    const ONESIGNAL_APP_ID = '0b01ec0c-8658-4593-94a8-9b282c52ca43';
+
+    let oneSignalPronto = false;
+    let usuarioPwaAtual = null;
+
+    const notifyBtn =
+      document.getElementById('notifyBtn');
+
+    function oneSignalConfigurado() {
+      return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+        .test(String(ONESIGNAL_APP_ID || '').trim());
+    }
+
+    if (oneSignalConfigurado()) {
+      window.OneSignalDeferred =
+        window.OneSignalDeferred || [];
+
+      window.OneSignalDeferred.push(
+        async function(OneSignal) {
+          try {
+            await OneSignal.init({
+              appId: ONESIGNAL_APP_ID,
+              serviceWorkerPath:
+                '/App-Atestado/push/onesignal/OneSignalSDKWorker.js',
+              serviceWorkerParam: {
+                scope:
+                  '/App-Atestado/push/onesignal/'
+              },
+              notifyButton: {
+                enable: false
+              }
+            });
+
+            oneSignalPronto = true;
+
+            if (
+              usuarioPwaAtual &&
+              usuarioPwaAtual.externalId
+            ) {
+              await OneSignal.login(
+                usuarioPwaAtual.externalId
+              );
+            }
+
+            atualizarBotaoNotificacao();
+          } catch (erro) {
+            console.error(
+              'Falha ao inicializar notificações:',
+              erro
+            );
+          }
+        }
+      );
+    } else if (notifyBtn) {
+      notifyBtn.title =
+        'Configure o App ID do OneSignal primeiro';
+    }
+
+    window.addEventListener(
+      'message',
+      async function(event) {
+        const dados =
+          event && event.data
+            ? event.data
+            : {};
+
+        if (
+          dados.tipo ===
+          'APPOLUS_PWA_USUARIO'
+        ) {
+          usuarioPwaAtual = {
+            nome:
+              String(dados.nome || ''),
+            externalId:
+              String(dados.externalId || '')
+          };
+
+          if (oneSignalPronto) {
+            window.OneSignalDeferred.push(
+              async function(OneSignal) {
+                try {
+                  await OneSignal.login(
+                    usuarioPwaAtual.externalId
+                  );
+
+                  atualizarBotaoNotificacao();
+                } catch (erro) {
+                  console.error(
+                    'Falha ao identificar usuário nas notificações:',
+                    erro
+                  );
+                }
+              }
+            );
+          }
+        }
+
+        if (
+          dados.tipo ===
+          'APPOLUS_PWA_LOGOUT'
+        ) {
+          usuarioPwaAtual = null;
+
+          if (oneSignalPronto) {
+            window.OneSignalDeferred.push(
+              async function(OneSignal) {
+                try {
+                  await OneSignal.logout();
+                  atualizarBotaoNotificacao();
+                } catch (erro) {
+                  console.error(
+                    'Falha ao encerrar usuário das notificações:',
+                    erro
+                  );
+                }
+              }
+            );
+          }
+        }
+      }
+    );
+
+    async function ativarNotificacoesPWA() {
+      if (!oneSignalConfigurado()) {
+        alert(
+          'As notificações ainda precisam ser configuradas no PWA.'
+        );
+        return;
+      }
+
+      if (
+        !usuarioPwaAtual ||
+        !usuarioPwaAtual.externalId
+      ) {
+        alert(
+          'Entre no Controle de Atendimentos antes de ativar as notificações.'
+        );
+        return;
+      }
+
+      window.OneSignalDeferred.push(
+        async function(OneSignal) {
+          try {
+            await OneSignal.login(
+              usuarioPwaAtual.externalId
+            );
+
+            await OneSignal.Notifications
+              .requestPermission();
+
+            atualizarBotaoNotificacao();
+          } catch (erro) {
+            console.error(erro);
+
+            alert(
+              'Não foi possível ativar as notificações neste aparelho.'
+            );
+          }
+        }
+      );
+    }
+
+    function atualizarBotaoNotificacao() {
+      if (!notifyBtn) {
+        return;
+      }
+
+      if (!oneSignalConfigurado()) {
+        notifyBtn.textContent =
+          '🔔 Notificações';
+        return;
+      }
+
+      window.OneSignalDeferred.push(
+        async function(OneSignal) {
+          try {
+            const permissao =
+              OneSignal.Notifications.permission;
+
+            const optIn =
+              OneSignal.User.PushSubscription.optedIn;
+
+            if (permissao && optIn) {
+              notifyBtn.textContent =
+                '🔔 Ativadas';
+              notifyBtn.title =
+                'Notificações ativas neste aparelho';
+            } else {
+              notifyBtn.textContent =
+                '🔔 Notificações';
+              notifyBtn.title =
+                'Ativar notificações';
+            }
+          } catch (erro) {
+            // Mantém o botão normal.
+          }
+        }
+      );
+    }
+
+    if (notifyBtn) {
+      notifyBtn.addEventListener(
+        'click',
+        ativarNotificacoesPWA
+      );
+    }
+
+    atualizarConexao();
+
+  </script>
+</body>
+</html>
