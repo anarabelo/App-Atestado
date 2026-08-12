@@ -8,16 +8,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Atendimentos">
   <meta name="description" content="Controle de Atendimentos Appolus">
-
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
-
   <title>Controle de Atendimentos</title>
-
-  <script
-    src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js"
-    defer>
-  </script>
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
   <style>
     :root {
@@ -28,23 +22,14 @@
       --border:#e5e7eb;
     }
 
-    * {
-      box-sizing:border-box;
-    }
+    * { box-sizing:border-box; }
 
-    html,
-    body {
+    html, body {
       margin:0;
       width:100%;
       height:100%;
       overflow:hidden;
-      font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
+      font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
       background:var(--bg);
       color:var(--text);
     }
@@ -59,10 +44,7 @@
       flex:0 0 auto;
       background:#fff;
       border-bottom:1px solid var(--border);
-      padding:
-        max(8px, env(safe-area-inset-top))
-        12px
-        8px;
+      padding:max(8px, env(safe-area-inset-top)) 12px 8px;
       display:flex;
       align-items:center;
       gap:10px;
@@ -76,17 +58,10 @@
       border-radius:12px;
       display:grid;
       place-items:center;
-      background:
-        linear-gradient(
-          135deg,
-          #0f5bd8,
-          #4b88ef
-        );
+      background:linear-gradient(135deg,#0f5bd8,#4b88ef);
       color:#fff;
       font-weight:800;
-      box-shadow:
-        0 6px 16px
-        rgba(15,91,216,.22);
+      box-shadow:0 6px 16px rgba(15,91,216,.22);
       flex:0 0 auto;
     }
 
@@ -162,18 +137,13 @@
     }
 
     .loading-card {
-      width:min(
-        320px,
-        calc(100% - 32px)
-      );
+      width:min(320px, calc(100% - 32px));
       background:#fff;
       border:1px solid var(--border);
       border-radius:18px;
       padding:24px;
       text-align:center;
-      box-shadow:
-        0 12px 36px
-        rgba(15,35,70,.08);
+      box-shadow:0 12px 36px rgba(15,35,70,.08);
     }
 
     .spinner {
@@ -183,8 +153,7 @@
       border-top-color:var(--primary);
       border-radius:50%;
       margin:0 auto 14px;
-      animation:
-        spin .8s linear infinite;
+      animation:spin .8s linear infinite;
     }
 
     @keyframes spin {
@@ -209,11 +178,7 @@
       position:absolute;
       left:12px;
       right:12px;
-      bottom:
-        calc(
-          12px +
-          env(safe-area-inset-bottom)
-        );
+      bottom:calc(12px + env(safe-area-inset-bottom));
       background:#172033;
       color:#fff;
       border-radius:14px;
@@ -222,9 +187,7 @@
       text-align:center;
       z-index:20;
       display:none;
-      box-shadow:
-        0 12px 30px
-        rgba(0,0,0,.22);
+      box-shadow:0 12px 30px rgba(0,0,0,.22);
     }
 
     .offline.show {
@@ -235,11 +198,7 @@
       position:fixed;
       left:12px;
       right:12px;
-      bottom:
-        calc(
-          12px +
-          env(safe-area-inset-bottom)
-        );
+      bottom:calc(12px + env(safe-area-inset-bottom));
       max-width:520px;
       margin:auto;
       background:#172033;
@@ -250,9 +209,7 @@
       display:none;
       align-items:center;
       gap:10px;
-      box-shadow:
-        0 16px 40px
-        rgba(0,0,0,.28);
+      box-shadow:0 16px 40px rgba(0,0,0,.28);
     }
 
     .install.show {
@@ -330,21 +287,13 @@
       </div>
 
       <div class="brand">
-        <strong>
-          Controle de Atendimentos
-        </strong>
-
-        <small>
-          Appolus
-        </small>
+        <strong>Controle de Atendimentos</strong>
+        <small>Appolus</small>
       </div>
 
       <div class="actions">
 
-        <button
-          id="installBtnTop"
-          hidden
-        >
+        <button id="installBtnTop" hidden>
           Instalar
         </button>
 
@@ -379,7 +328,6 @@
         class="loading"
         id="loading"
       >
-
         <div class="loading-card">
 
           <div class="spinner"></div>
@@ -393,7 +341,6 @@
           </span>
 
         </div>
-
       </div>
 
       <iframe
@@ -452,59 +399,66 @@
 
   <script>
 
-    /* ============================================================
-       APLICAÇÃO
-       ============================================================ */
-
     const APP_URL =
       'https://script.google.com/a/macros/appolus.com.br/s/AKfycbzzTf9IIJ2VRR4g3qiKezsuJvp20AnN8pjXRvvOCrJxGllzTPQohTYXkdAFExbEQ2Q_NA/exec';
+
 
     const frame =
       document.getElementById(
         'appFrame'
       );
 
+
     const loading =
       document.getElementById(
         'loading'
       );
+
 
     const offline =
       document.getElementById(
         'offline'
       );
 
+
     const refreshBtn =
       document.getElementById(
         'refreshBtn'
       );
+
 
     const openBtn =
       document.getElementById(
         'openBtn'
       );
 
+
     const installBox =
       document.getElementById(
         'installBox'
       );
+
 
     const installBtn =
       document.getElementById(
         'installBtn'
       );
 
+
     const installBtnTop =
       document.getElementById(
         'installBtnTop'
       );
+
 
     const dismissInstall =
       document.getElementById(
         'dismissInstall'
       );
 
-    let deferredPrompt = null;
+
+    let deferredPrompt =
+      null;
 
 
     function atualizarConexao() {
@@ -523,10 +477,12 @@
         'hide'
       );
 
+
       const separador =
         APP_URL.includes('?')
           ? '&'
           : '?';
+
 
       frame.src =
         APP_URL +
@@ -550,6 +506,16 @@
 
           },
           250
+        );
+
+
+        setTimeout(
+          function() {
+
+            solicitarUsuarioAoSistemaPWA();
+
+          },
+          800
         );
 
       }
@@ -581,6 +547,7 @@
       function() {
 
         atualizarConexao();
+
         recarregarSistema();
 
       }
@@ -594,7 +561,7 @@
 
 
     /* ============================================================
-       INSTALAÇÃO PWA
+       INSTALAÇÃO DO PWA
        ============================================================ */
 
     window.addEventListener(
@@ -606,9 +573,11 @@
         deferredPrompt =
           event;
 
+
         installBox.classList.add(
           'show'
         );
+
 
         installBtnTop.hidden =
           false;
@@ -619,21 +588,30 @@
 
     async function instalar() {
 
-      if (!deferredPrompt) {
+      if (
+        !deferredPrompt
+      ) {
+
         return;
+
       }
 
+
       deferredPrompt.prompt();
+
 
       await deferredPrompt
         .userChoice;
 
+
       deferredPrompt =
         null;
+
 
       installBox.classList.remove(
         'show'
       );
+
 
       installBtnTop.hidden =
         true;
@@ -673,6 +651,7 @@
           'show'
         );
 
+
         installBtnTop.hidden =
           true;
 
@@ -681,7 +660,7 @@
 
 
     /* ============================================================
-       SERVICE WORKER PRINCIPAL DO PWA
+       SERVICE WORKER PRINCIPAL
        ============================================================ */
 
     if (
@@ -701,6 +680,7 @@
                   './service-worker.js'
                 );
 
+
             registration.update();
 
           } catch (erro) {
@@ -719,17 +699,20 @@
 
 
     /* ============================================================
-       ONESIGNAL / WEB PUSH
+       ONESIGNAL
        ============================================================ */
 
     const ONESIGNAL_APP_ID =
       '0b01ec0c-8658-4593-94a8-9b282c52ca43';
 
+
     let oneSignalPronto =
       false;
 
+
     let usuarioPwaAtual =
       null;
+
 
     const notifyBtn =
       document.getElementById(
@@ -750,7 +733,97 @@
 
 
     /* ============================================================
-       INICIALIZA ONESIGNAL
+       SOLICITA O USUÁRIO AO APPS SCRIPT
+       ============================================================ */
+
+    function solicitarUsuarioAoSistemaPWA() {
+
+      try {
+
+        if (
+          frame &&
+          frame.contentWindow
+        ) {
+
+          frame.contentWindow.postMessage(
+            {
+              tipo:
+                'APPOLUS_PWA_SOLICITAR_USUARIO'
+            },
+            '*'
+          );
+
+        }
+
+      } catch (erro) {
+
+        console.error(
+          'Não foi possível solicitar o usuário ao sistema:',
+          erro
+        );
+
+      }
+
+    }
+
+
+    async function aguardarUsuarioPWA(
+      tempoMaximo = 4000
+    ) {
+
+      if (
+        usuarioPwaAtual &&
+        usuarioPwaAtual.externalId
+      ) {
+
+        return true;
+
+      }
+
+
+      solicitarUsuarioAoSistemaPWA();
+
+
+      const inicio =
+        Date.now();
+
+
+      while (
+        Date.now() - inicio <
+        tempoMaximo
+      ) {
+
+        await new Promise(
+          function(resolve) {
+
+            setTimeout(
+              resolve,
+              200
+            );
+
+          }
+        );
+
+
+        if (
+          usuarioPwaAtual &&
+          usuarioPwaAtual.externalId
+        ) {
+
+          return true;
+
+        }
+
+      }
+
+
+      return false;
+
+    }
+
+
+    /* ============================================================
+       INICIALIZA O ONESIGNAL
        ============================================================ */
 
     if (
@@ -795,6 +868,9 @@
               true;
 
 
+            solicitarUsuarioAoSistemaPWA();
+
+
             if (
               usuarioPwaAtual &&
               usuarioPwaAtual.externalId
@@ -823,19 +899,11 @@
 
       );
 
-
-    } else if (
-      notifyBtn
-    ) {
-
-      notifyBtn.title =
-        'Configure o App ID do OneSignal primeiro';
-
     }
 
 
     /* ============================================================
-       RECEBE USUÁRIO LOGADO DO GOOGLE APPS SCRIPT
+       RECEBE IDENTIDADE DO APPS SCRIPT
        ============================================================ */
 
     window.addEventListener(
@@ -871,6 +939,13 @@
           };
 
 
+          console.log(
+            'Usuário recebido pelo PWA:',
+            usuarioPwaAtual.nome,
+            usuarioPwaAtual.externalId
+          );
+
+
           if (
             oneSignalPronto
           ) {
@@ -896,7 +971,7 @@
                   } catch (erro) {
 
                     console.error(
-                      'Falha ao identificar usuário nas notificações:',
+                      'Falha ao identificar usuário no OneSignal:',
                       erro
                     );
 
@@ -936,13 +1011,14 @@
 
                     await OneSignal.logout();
 
+
                     atualizarBotaoNotificacao();
 
 
                   } catch (erro) {
 
                     console.error(
-                      'Falha ao encerrar usuário das notificações:',
+                      'Falha ao encerrar usuário no OneSignal:',
                       erro
                     );
 
@@ -962,7 +1038,7 @@
 
 
     /* ============================================================
-       BOTÃO ATIVAR NOTIFICAÇÕES
+       ATIVA AS NOTIFICAÇÕES
        ============================================================ */
 
     async function ativarNotificacoesPWA() {
@@ -980,13 +1056,16 @@
       }
 
 
+      const usuarioIdentificado =
+        await aguardarUsuarioPWA();
+
+
       if (
-        !usuarioPwaAtual ||
-        !usuarioPwaAtual.externalId
+        !usuarioIdentificado
       ) {
 
         alert(
-          'Entre no Controle de Atendimentos antes de ativar as notificações.'
+          'Não foi possível identificar o profissional logado. Clique em Atualizar e tente novamente.'
         );
 
         return;
@@ -1023,10 +1102,12 @@
             ) {
 
               alert(
-                'A permissão de notificações não foi concedida.'
+                'A permissão para notificações não foi concedida.'
               );
 
+
               atualizarBotaoNotificacao();
+
 
               return;
 
@@ -1051,10 +1132,12 @@
                   .PushSubscription
                   .optIn();
 
-              } catch (erroOptIn) {
+              } catch (
+                erroOptIn
+              ) {
 
                 console.error(
-                  'Falha no opt-in:',
+                  'Erro ao ativar assinatura Push:',
                   erroOptIn
                 );
 
@@ -1066,48 +1149,10 @@
             atualizarBotaoNotificacao();
 
 
-            setTimeout(
-              function() {
-
-                window.OneSignalDeferred.push(
-
-                  async function(
-                    OneSignal
-                  ) {
-
-                    try {
-
-                      const ativo =
-                        OneSignal
-                          .User
-                          .PushSubscription
-                          .optedIn;
-
-
-                      if (
-                        ativo
-                      ) {
-
-                        alert(
-                          'Notificações ativadas com sucesso neste aparelho.'
-                        );
-
-                      }
-
-                    } catch (erro) {
-
-                      console.error(
-                        erro
-                      );
-
-                    }
-
-                  }
-
-                );
-
-              },
-              500
+            alert(
+              'Notificações ativadas para ' +
+              usuarioPwaAtual.nome +
+              '.'
             );
 
 
@@ -1133,7 +1178,7 @@
 
 
     /* ============================================================
-       ATUALIZA TEXTO DO BOTÃO
+       ATUALIZA O BOTÃO
        ============================================================ */
 
     function atualizarBotaoNotificacao() {
@@ -1141,19 +1186,6 @@
       if (
         !notifyBtn
       ) {
-        return;
-      }
-
-
-      if (
-        !oneSignalConfigurado()
-      ) {
-
-        notifyBtn.textContent =
-          '🔔 Notificações';
-
-        notifyBtn.title =
-          'OneSignal não configurado';
 
         return;
 
@@ -1189,6 +1221,7 @@
               notifyBtn.textContent =
                 '🔔 Ativadas';
 
+
               notifyBtn.title =
                 'Notificações ativas neste aparelho';
 
@@ -1196,6 +1229,7 @@
 
               notifyBtn.textContent =
                 '🔔 Notificações';
+
 
               notifyBtn.title =
                 'Ativar notificações';
@@ -1206,7 +1240,7 @@
           } catch (erro) {
 
             console.error(
-              'Não foi possível consultar o estado das notificações:',
+              'Erro ao consultar notificações:',
               erro
             );
 
@@ -1230,10 +1264,6 @@
 
     }
 
-
-    /* ============================================================
-       ESTADO INICIAL
-       ============================================================ */
 
     atualizarConexao();
 
